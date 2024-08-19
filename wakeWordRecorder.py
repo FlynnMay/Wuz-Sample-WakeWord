@@ -43,7 +43,7 @@ class WakeWordRecorder:
         print(f"Device List")
         print("================================")
         for i, d in enumerate(devices):
-            print(f"({i}) {d["name"]}")
+            print(f"({i}) {d['name']}")
         print("================================")
 
     def open_mic(self):
