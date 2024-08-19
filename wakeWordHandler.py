@@ -12,7 +12,7 @@ class WakeWordHandler():
         self.on_word_used = on_word_used
         self.event = event
         self.model = Model(
-            wakeword_model_paths=["/home/flynn/Documents/projects/Wuz-Sample-WakeWord/models/whuz.onnx"]
+            wakeword_model_paths=["models/whuz.onnx"]
         )
         self.n_models = len(self.model.models.keys())
         self.trigger_threshold = trigger_threshold
