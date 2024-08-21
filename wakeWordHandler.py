@@ -54,5 +54,5 @@ class WakeWordHandler():
             self.last_trigger_time = current_time
             threading.Timer(0, self.on_word_used).start()
 
-    def purge(self):
+    def purge_buffer(self):
         self.model.reset()

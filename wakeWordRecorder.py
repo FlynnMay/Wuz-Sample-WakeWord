@@ -54,7 +54,6 @@ class WakeWordRecorder:
         self.wakeWordHandler.start_listening()
 
     def stop_listening(self):
-        self.wakeWordHandler.purge()
         self.wakeWordHandler.stop_listening()
 
     def close_mic(self):
@@ -81,6 +80,10 @@ class WakeWordRecorder:
 
             if self.on_recording_ended != None:
                 self.on_recording_ended(frames)
+
+    def purge_frames(self):
+        self.audio_streamer.clear_frames()
+        self.wakeWordHandler.purge_buffer()
 
 if __name__ == "__main__":
     wwr = WakeWordRecorder(device_name="Logitech USB Microphone: Audio (hw:3,0)")

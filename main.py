@@ -4,6 +4,8 @@ import asyncio
 import websockets
 from wakeWordRecorder import WakeWordRecorder        
 import argparse
+import json
+import base64
 
 def chunkFrames(frames: list, chunkSize: int):
     all_chunks = []
@@ -16,6 +18,15 @@ def chunkFrames(frames: list, chunkSize: int):
         chunks.append(frame)
     
     return all_chunks
+
+def start_event(channels, samplewidth, framerate):
+    return json.dumps({"action": "start", "channels": channels, "samplewidth": samplewidth, "framerate": framerate})
+
+def update_event(id, frames):
+    return json.dumps({"action": "update", "id": id, "frames": frames})
+
+def end_event(id):
+    return json.dumps({"action": "end", "id": id})
 
 async def connect(wwr: WakeWordRecorder, uri, record_time = 5):
     wwr.open_mic()
@@ -35,14 +46,19 @@ async def connect(wwr: WakeWordRecorder, uri, record_time = 5):
                 print("Recording ended")
                 wwr.word_detected.clear()
 
-                await websocket.send("start")
+                await websocket.send(start_event(channels=2, samplewidth=2, framerate=16000))
+                response = json.loads(await websocket.recv())
+                id = response["id"]
 
                 frames = wwr.audio_streamer.get_frames()
 
                 for frame in frames:
-                    await websocket.send(frame)
+                    encoded_frame = base64.b64encode(frame).decode(encoding="utf-8")
+                    await websocket.send(update_event(id=id, frames=encoded_frame))
 
-                await websocket.send('end')
+                await websocket.send(end_event(id=id))
+
+                wwr.purge_frames()
 
 
 if __name__ == "__main__":

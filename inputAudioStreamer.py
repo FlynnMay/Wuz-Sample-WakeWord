@@ -41,6 +41,7 @@ class InputAudioStreamer:
         self._rate = rate
         self._chunk = chunk
 
+
         try:
             self._stream = self._p.open(format=format,
                                 channels=channels,
